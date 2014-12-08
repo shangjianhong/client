@@ -1,0 +1,12 @@
+
+<Context>
+
+	<Resource name="jdbc/gamesdk" auth="Container" type="javax.sql.DataSource"
+		driverClassName="org.gjt.mm.mysql.Driver" maxIdle="20" maxWait="5000"
+		username="PushDB" password="PushDB"
+		url="jdbc:mysql://192.168.0.113:3306/PushDB?useUnicode=true&amp;characterEncoding=UTF8&amp;autoReconnect=true"
+		maxActive="100" removeAbandoned="true" removeAbandonedTimeout="60"
+		logAbandoned="true" />
+
+
+</Context>

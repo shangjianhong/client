@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 服务器配置信息，主要是IP和端口，如果IP信息为空，则默为（127.0.0.1）本地IP，port信息为空，默认为9001, isLongConnection,连接是否为长连接，serverId 
+		id, 服务唯一标志,versionStartPos 版本字段的开始位置，versionLength 版本字段长度， commandStartPos命令字段开始位置，commandLength命令长度 
+		responseCodeStartPos返回码凯斯后位置， responseCodeLength 返回码字段长度， processThreadNumber如果isServer=true时有用， 
+		用来表示为每个连接分配多少个线程处理请求的数量,hasSuffixByte表示所有的请求包后包含4个字节的数组{1，1，1，1} -->
+	<server port="6100" ip="0.0.0.0" isLongConnection="true"
+		serverId="103" isServer="true" lengthStartPos="0" lengthLength="4" versionStartPos="4" versionLength="1"
+		commandStartPos="5" commandLength="2" responseCodeStartPos="9"
+		responseCodeLength="2" processThreadNumber="2" hasSuffixByte="false">
+		<!-- 包头信息，所有的协议都要有统一的包头 git -->
+		<header>
+			<!-- 字段属性描述： code：字段的唯一标识，业务类可以根据这个code获取对应的值 length：字段的长度,此属性表示该字段的字节数（UTF-8编码）， 
+				如果type的类型为4（TLV2）那么这个长度应该是 存储长度的字节数； type： 字段的类型 ， 1:字符，2:整型，3:长整型，4: TLV2(长度+字符） 
+				5: TLV3类型，但是内容是通过gzip压缩的,6: TLV4,原始字节数；7:TLV5 表示该字段是一个循环的字段，前面没有count，这个字段是协议的最后一个字段; 
+				seq：数序，该属性表示该字段在传输中的位置 -->		    
+			<requestHeader>
+				<field code="length" length="4" type="2" seq="1" />
+				<field code="version" length="1" type="2" seq="2" />
+				<field code="command" length="2" type="2" seq="3" />
+				<field code="rid" length="4" type="2" seq="4" />
+			</requestHeader>
+			<!-- 客户端响应的包头（某些协议如果有不一样的包头，可以覆盖此包头 -->
+			<responseHeader>
+				<field code="length" length="4" type="2" seq="1" />
+				<field code="version" length="1" type="2" seq="2" />
+				<field code="command" length="2" type="2" seq="3" />
+				<field code="rid" length="4" type="2" seq="4" />
+				<field code="responseCode" length="2" type="2" seq="5" />
+			</responseHeader>
+		</header>
+		<!-- 服务端非正常处理时的返回字段， 某些协议如果有不一样错误返回，可以覆盖此响应内容 -->
+		<errorResponseField>
+			<field code="responseMsg" length="2" type="4" seq="1" />
+		</errorResponseField>
+
+		<protocals>
+			<!-- 具体的协议配置，协议属性描述： command：协议定义的命令；processClass，具体业务的处理类 -->
+			<protocal command="1" processClass="cn.ccagame.process.RegisterProcess">
+				<requestField>
+					<!-- post new service-->
+					<field code="jsonStr" length="2" type="4" seq="1" />
+				</requestField>
+				<responseField>
+					<field code="jsonStr" length="2" type="4" seq="1" />
+				</responseField>
+			</protocal>	
+			<protocal command="2" processClass="cn.ccagame.process.AdPushProcess">
+				<requestField>
+					<!-- post new service-->
+					<field code="jsonStr" length="2" type="4" seq="1" />
+				</requestField>
+				<responseField>
+					<field code="jsonStr" length="2" type="4" seq="1" />
+				</responseField>
+				<errorResponseField>
+					<field code="errorReason" length="2" type="4" seq="1" />
+				</errorResponseField>
+			</protocal>	
+			<protocal command="4" processClass="cn.ccagame.process.UserStepProcess">
+				<requestField>
+					<!-- post new service-->
+					<field code="jsonStr" length="2" type="4" seq="1" />
+				</requestField>
+				<errorResponseField>
+					<field code="errorReason" length="2" type="4" seq="1" />
+				</errorResponseField>
+			</protocal>		
+			<protocal command="5" processClass="cn.ccagame.process.BatchUserStepProcess">
+				<requestField>
+					<!-- post new service-->
+					<field code="jsonStr" length="2" type="4" seq="1" />
+				</requestField>
+				<errorResponseField>
+					<field code="errorReason" length="2" type="4" seq="1" />
+				</errorResponseField>
+			</protocal>	
+			<protocal command="6" processClass="cn.ccagame.process.FetchDataProcess">
+				<requestField>
+					<!-- post new service-->
+					<field code="jsonStr" length="2" type="4" seq="1" />
+				</requestField>
+				<responseField>
+					<field code="jsonStr" length="2" type="4" seq="1" />
+				</responseField>
+				<errorResponseField>
+					<field code="errorReason" length="2" type="4" seq="1" />
+				</errorResponseField>
+			</protocal>									
+		</protocals>
+	</server>
+</config>
